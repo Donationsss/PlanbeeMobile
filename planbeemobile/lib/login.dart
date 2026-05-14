@@ -11,14 +11,21 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Image.asset(""),
-        centerTitle: true,
-        
-      ),
-      body: Column(
-        
-      ),
+      backgroundColor: Color(0xFFFFDA5E),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+             children: [
+               Image.asset("assets/logo.png", width: 100, height: 100,),
+               Text("Planbee", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 36),)
+             ], 
+            )
+          ],
+        ),
+      )
     );
   }
 }
