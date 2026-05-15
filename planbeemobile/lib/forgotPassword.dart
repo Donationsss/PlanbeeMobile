@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
-import 'package:planbeemobile/forgotPassword.dart';
 import 'package:planbeemobile/register.dart';
 
-class Login extends StatefulWidget {
-  const Login({super.key});
+class Forgotpassword extends StatefulWidget {
+  const Forgotpassword({super.key});
 
   @override
-  State<Login> createState() => _LoginState();
+  State<Forgotpassword> createState() => _ForgotpasswordState();
 }
 
-class _LoginState extends State<Login> {
+class _ForgotpasswordState extends State<Forgotpassword> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,17 +52,6 @@ class _LoginState extends State<Login> {
                             ),
                           ),
                         ),
-                        SizedBox(
-                          width: 350,
-                          child: TextField(
-                            decoration: InputDecoration(
-                              labelText: "Senha",
-                              suffixIcon: Icon(MdiIcons.eyeOff),
-                              hintText: "Digite sua senha",
-                              border: OutlineInputBorder(),
-                            ),
-                          ),
-                        ),
                       ],
                     ),
                     Padding(
@@ -72,7 +60,7 @@ class _LoginState extends State<Login> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           TextButton(onPressed: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => Forgotpassword()));
+
                           }, child: Text("Esqueceu sua senha?", style: TextStyle(fontSize: 12, color: Colors.black),)),
                           TextButton(onPressed: () {
                             Navigator.push(context, MaterialPageRoute(builder: (context) => Register()));
