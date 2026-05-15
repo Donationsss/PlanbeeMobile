@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:planbeemobile/login.dart';
 import 'home.dart';
 
 void main() {
