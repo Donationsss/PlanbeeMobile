@@ -12,6 +12,13 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
+  bool passwordVisible = false;
+  @override
+  void initState() {
+    super.initState();
+    passwordVisible = true;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,8 +30,15 @@ class _RegisterState extends State<Register> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset("assets/logo.png", width: 100, height: 100,),
-                  Text("Planbee", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 36),)
+                  Image.asset(
+                    "assets/logo.png",
+                    width: 100,
+                    height: 100,
+                  ),
+                  Text(
+                    "Planbee",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 36),
+                  )
                 ],
               ),
               Padding(
@@ -34,8 +48,7 @@ class _RegisterState extends State<Register> {
                   children: [
                     SizedBox(
                       width: 350,
-                      child:
-                      TextFormField(
+                      child: TextFormField(
                         decoration: InputDecoration(
                           labelText: "Email",
                           suffixIcon: Icon(Icons.mail),
@@ -46,8 +59,7 @@ class _RegisterState extends State<Register> {
                     ),
                     SizedBox(
                       width: 350,
-                      child:
-                      TextFormField(
+                      child: TextFormField(
                         decoration: InputDecoration(
                           labelText: "Usuário",
                           suffixIcon: Icon(MdiIcons.account),
@@ -58,30 +70,45 @@ class _RegisterState extends State<Register> {
                     ),
                     SizedBox(
                       width: 350,
-                      child:
-                      TextFormField(
+                      child: TextFormField(
+                        obscureText: passwordVisible,
                         decoration: InputDecoration(
                           labelText: "Senha",
-                          suffixIcon: Icon(MdiIcons.eyeOff),
+                          suffixIcon: IconButton(
+                            icon: Icon(passwordVisible ? MdiIcons.eyeOff : MdiIcons.eye),
+                            onPressed: () {
+                              setState(() {
+                                passwordVisible = !passwordVisible;
+                              });
+                            },
+                          ),
                           hintText: "Digite sua senha",
                           border: OutlineInputBorder(),
                         ),
                       ),
                     ),
-                    ElevatedButton(onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => const Login()));
-                    },style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFFFFCB20),
-                      elevation: 10,
-                      fixedSize: Size(150, 50),
-
-                    ), child: Text("Registrar", style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold)),)
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const Login()));
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFFFFCB20),
+                        elevation: 10,
+                        fixedSize: Size(150, 50),
+                      ),
+                      child: Text("Registrar",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold)),
+                    )
                   ],
                 ),
               )
             ],
           ),
-        )
-    );
+        ));
   }
 }

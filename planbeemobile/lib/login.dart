@@ -12,6 +12,13 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  bool passwordVisible = false;
+  @override
+  void initState() {
+    super.initState();
+    passwordVisible = true;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,9 +63,17 @@ class _LoginState extends State<Login> {
                         SizedBox(
                           width: 350,
                           child: TextField(
+                            obscureText: passwordVisible,
                             decoration: InputDecoration(
                               labelText: "Senha",
-                              suffixIcon: Icon(MdiIcons.eyeOff),
+                              suffixIcon: IconButton(
+                                icon: Icon(passwordVisible ? MdiIcons.eyeOff : MdiIcons.eye),
+                                onPressed: () {
+                                  setState(() {
+                                    passwordVisible = !passwordVisible;
+                                  });
+                                },
+                              ),
                               hintText: "Digite sua senha",
                               border: OutlineInputBorder(),
                             ),
