@@ -40,6 +40,7 @@ class _ForgotpasswordState extends State<Forgotpassword> {
                     Column(
                       spacing: 30,
                       children: [
+                        Text("Recuperação de senha", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),),
                         SizedBox(
                           width: 350,
                           child: TextField(
@@ -59,12 +60,7 @@ class _ForgotpasswordState extends State<Forgotpassword> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          TextButton(onPressed: () {
 
-                          }, child: Text("Esqueceu sua senha?", style: TextStyle(fontSize: 12, color: Colors.black),)),
-                          TextButton(onPressed: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => Register()));
-                          }, child: Text("Não tem uma conta? Registre-se!", style: TextStyle(fontSize: 12, color: Colors.black),))
                         ],
                       ),
                     ),
@@ -81,7 +77,7 @@ class _ForgotpasswordState extends State<Forgotpassword> {
                         elevation: 10,
                         fixedSize: Size(150, 50),
                       ),
-                      child: Text("Login",
+                      child: Text("Enviar código",
                           style: TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.bold)),

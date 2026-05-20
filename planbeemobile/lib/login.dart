@@ -81,6 +81,8 @@ class _LoginState extends State<Login> {
                       ),
                     ),
                     SizedBox(height: 20,),
+
+                    // trocar o link para a Home() dps que fazer o merge
                     ElevatedButton(
                       onPressed: () {
                         Navigator.push(
