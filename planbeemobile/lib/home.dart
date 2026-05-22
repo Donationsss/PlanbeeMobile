@@ -9,24 +9,31 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  @override
-  // Coloque esta função antes do "Widget build" ou no final da classe
-  Widget _buildDiaSemana(String nome, Color cor) {
+
+  int _currentIndex = 0;
+
+  Widget _buildDiaSemana(String nome, Color cor) { //precisa do _ pra fazer o novo widget
     return Column(
       children: [
-        Text(nome, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        Text(nome, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15)),
         SizedBox(height: 10),
         Container(
-          width: 30,
-          height: 30,
+          width: 35,
+          height: 70,
           decoration: BoxDecoration(
             color: cor,
             shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(color: Colors.black54, blurRadius: 2, spreadRadius: 0),
+              BoxShadow(color: Colors.black12, blurRadius: 7, spreadRadius: 2,),
+            ],
           ),
         ),
       ],
     );
   }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -47,14 +54,13 @@ class _HomeState extends State<Home> {
           ],
         ),
         centerTitle: true,
-
       ),
+
       backgroundColor: const Color(0xFFFFF9CF),
       body: Center( // Centraliza tudo na tela
         child: Column(
           mainAxisSize: MainAxisSize.min, // Faz a coluna ocupar apenas o espaço necessário
           children: [
-            // --- PARTE DE CIMA: Título ---
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -62,30 +68,65 @@ class _HomeState extends State<Home> {
                 Icon(Icons.arrow_right, size: 60),
               ],
             ),
-
             SizedBox(height: 20), // Um respiro entre o título e o card
 
-            // --- PARTE DE BAIXO: O Card dos Dias ---
+            // cards
             Container(
-              margin: EdgeInsets.symmetric(horizontal: 20),
+              margin: EdgeInsets.symmetric(horizontal: 10),
               padding: EdgeInsets.symmetric(vertical: 20),
               decoration: BoxDecoration(
-                color: Colors.orangeAccent,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black54, blurRadius: 5,
+                    offset: Offset(4, 4)
+                  ),
+                ],
+                gradient: LinearGradient(colors: [Colors.orange, Colors. orangeAccent, Colors.yellow]),
                 borderRadius: BorderRadius.circular(20),
               ),
+              child: IntrinsicHeight(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  _buildDiaSemana("Segunda", Colors.green),
-                  _buildDiaSemana("Terça", Colors.green),
-                  _buildDiaSemana("Quarta", Colors.red),
-                  _buildDiaSemana("Quinta", Colors.green),
-                  _buildDiaSemana("Sexta", Colors.grey),
+                  _buildDiaSemana("Segnd", Colors.white,),
+                  VerticalDivider(color: Colors.white, thickness: 2.5),
+                  _buildDiaSemana("Terça", Colors.white),
+                  VerticalDivider(color: Colors.white, thickness: 2.5),
+                  _buildDiaSemana("Quarta", Colors.white),
+                  VerticalDivider(color: Colors.white, thickness: 2.5),
+                  _buildDiaSemana("Quinta", Colors.white),
+                  VerticalDivider(color: Colors.white, thickness: 2.5),
+                  _buildDiaSemana("Sexta", Colors.white),
                 ],
+              ),
               ),
             ),
           ],
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
+        currentIndex: 0,
+        iconSize: 30.0,
+        type: BottomNavigationBarType.fixed,
+        items: [
+          BottomNavigationBarItem(
+              icon: Icon(Icons.home_filled), label: "",
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.calendar_month_outlined), label: "",
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.timelapse_outlined), label: "",
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.menu_book), label: "",
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.add), label: "",
+          ),
+        ],
       ),
     );
   }
