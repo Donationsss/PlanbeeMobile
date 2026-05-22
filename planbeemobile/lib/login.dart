@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:planbeemobile/forgotPassword.dart';
+import 'package:planbeemobile/home.dart';
 import 'package:planbeemobile/register.dart';
 
 class Login extends StatefulWidget {
@@ -103,7 +104,7 @@ class _LoginState extends State<Login> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => Register()));
+                                builder: (context) => Home()));
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xFFFFCB20),
