@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:planbeemobile/perfil.dart';
+import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
+import 'package:planbeemobile/components/appbar.dart';
 
+
+import 'components/bottombar.dart';
 class Home extends StatefulWidget {
   const Home({super.key});
 
@@ -9,8 +12,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-
-  int _currentIndex = 0;
 
   Widget _buildDiaSemana(String nome, Color cor) { //precisa do _ pra fazer o novo widget
     return Column(
@@ -37,22 +38,8 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.amberAccent,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Image.asset("assets/logo.png", height: 50, width: 50,),
-            Text("Planbee", style: TextStyle(fontSize: 25),),
-            IconButton(
-                onPressed: (){
-                  Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => const Perfil()),
-                  );
-                } ,
-                icon: const Icon(Icons.person, size: 35,),
-            ),
-          ],
-        ),
+        backgroundColor: Color(0xFFFFDA5E),
+        title: MainAppBar(),
         centerTitle: true,
       ),
 
@@ -64,6 +51,7 @@ class _HomeState extends State<Home> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+
                 Text("Semana 1", style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold)),
                 Icon(Icons.arrow_right, size: 60),
               ],
@@ -81,22 +69,23 @@ class _HomeState extends State<Home> {
                     offset: Offset(4, 4)
                   ),
                 ],
-                gradient: LinearGradient(colors: [Colors.orange, Colors. orangeAccent, Colors.yellow]),
+                gradient: LinearGradient(
+                    colors: [Color(0xffFFA53D), Color(0xffFFCA37)]),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: IntrinsicHeight(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  _buildDiaSemana("Segnd", Colors.white,),
+                  _buildDiaSemana("Seg", Colors.white,),
                   VerticalDivider(color: Colors.white, thickness: 2.5),
-                  _buildDiaSemana("Terça", Colors.white),
+                  _buildDiaSemana("Ter", Colors.white),
                   VerticalDivider(color: Colors.white, thickness: 2.5),
-                  _buildDiaSemana("Quarta", Colors.white),
+                  _buildDiaSemana("Qua", Colors.white),
                   VerticalDivider(color: Colors.white, thickness: 2.5),
-                  _buildDiaSemana("Quinta", Colors.white),
+                  _buildDiaSemana("Qui", Colors.white),
                   VerticalDivider(color: Colors.white, thickness: 2.5),
-                  _buildDiaSemana("Sexta", Colors.white),
+                  _buildDiaSemana("Sex", Colors.white),
                 ],
               ),
               ),
@@ -104,30 +93,7 @@ class _HomeState extends State<Home> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        currentIndex: 0,
-        iconSize: 30.0,
-        type: BottomNavigationBarType.fixed,
-        items: [
-          BottomNavigationBarItem(
-              icon: Icon(Icons.home_filled), label: "",
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.calendar_month_outlined), label: "",
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.timelapse_outlined), label: "",
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.menu_book), label: "",
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.add), label: "",
-          ),
-        ],
-      ),
+      bottomNavigationBar: BottomBar(),
     );
   }
 }
