@@ -60,6 +60,8 @@ flutter:
 
   assets:
     - assets/logo.png
+    - assets/abelha_animada.png
+    - assets/favo.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:
