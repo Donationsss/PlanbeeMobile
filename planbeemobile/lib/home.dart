@@ -11,6 +11,7 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
+
 class _HomeState extends State<Home> {
 
   Widget _buildDiaSemana(String nome, Color cor) { //precisa do _ pra fazer o novo widget
@@ -56,7 +57,7 @@ class _HomeState extends State<Home> {
                 Icon(Icons.arrow_right, size: 60),
               ],
             ),
-            SizedBox(height: 20), // Um respiro entre o título e o card
+            SizedBox(height: 20),
 
             // cards
             Container(
@@ -88,6 +89,27 @@ class _HomeState extends State<Home> {
                   _buildDiaSemana("Sex", Colors.white),
                 ],
               ),
+              ),
+            ),
+            SizedBox(height: 40),
+            Center(
+              child: Row(
+                children: [
+                  SizedBox(width: 33,),
+                  Stack(
+                  alignment: Alignment.center,
+                    children: [
+                      Image.asset("assets/favo.png", scale: 1.8,),
+                      Positioned(
+                        top: 90,
+                        left: 35,
+                        child: Image.asset("assets/abelha_animada.png", scale: 9,)
+                        ,)
+                    ],
+                  ),
+                  SizedBox(width: 12,),
+                  Text("0", textScaler: TextScaler.linear(12),)
+                ],
               ),
             ),
           ],
