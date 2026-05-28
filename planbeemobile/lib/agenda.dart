@@ -4,6 +4,7 @@ import 'package:planbeemobile/components/appbar.dart';
 
 
 import 'components/bottombar.dart';
+
 class Agenda extends StatefulWidget {
   const Agenda({super.key});
 
@@ -12,28 +13,6 @@ class Agenda extends StatefulWidget {
 }
 
 class _AgendaState extends State<Agenda> {
-
-  Widget _buildDiaSemana(String nome, Color cor) { //precisa do _ pra fazer o novo widget
-    return Column(
-      children: [
-        Text(nome, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15)),
-        SizedBox(height: 10),
-        Container(
-          width: 35,
-          height: 70,
-          decoration: BoxDecoration(
-            color: cor,
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(color: Colors.black54, blurRadius: 2, spreadRadius: 0),
-              BoxShadow(color: Colors.black12, blurRadius: 7, spreadRadius: 2,),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,36 +24,30 @@ class _AgendaState extends State<Agenda> {
 
       backgroundColor: const Color(0xFFFFF9CF),
       body: Center( // Centraliza tudo na tela
-        child: Column(
-          mainAxisSize: MainAxisSize.min, // Faz a coluna ocupar apenas o espaço necessário
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+        child: Container(
+          width: 350,
+          height: 400,
+          padding: EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: Color(0xFF2D2D2D),
+            borderRadius: BorderRadius.circular(23),
+          ),
+
+          child: Container(
+            decoration: BoxDecoration(
+              color: Color(0xFFFFDA5E),
+              borderRadius: BorderRadius.circular(23),
+            ),
+            child: GridView.count(
+              crossAxisCount: 7,
+              childAspectRatio: 0.5,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 15,
               children: [
-
-                Text("Semana 1", style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold)),
-                Icon(Icons.arrow_right, size: 60),
-              ],
+                
+              ]
             ),
-            SizedBox(height: 20), // Um respiro entre o título e o card
-
-            // cards
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 10),
-              padding: EdgeInsets.symmetric(vertical: 20),
-              decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                      color: Colors.black54, blurRadius: 5,
-                      offset: Offset(4, 4)
-                  ),
-                ],
-                gradient: LinearGradient(
-                    colors: [Color(0xffFFA53D), Color(0xffFFCA37)]),
-                borderRadius: BorderRadius.circular(20),
-              ),
-            ),
-          ],
+          )
         ),
       ),
       bottomNavigationBar: BottomBar(),
