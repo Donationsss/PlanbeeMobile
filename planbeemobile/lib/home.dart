@@ -108,7 +108,13 @@ class _HomeState extends State<Home> {
                     ],
                   ),
                   SizedBox(width: 12,),
-                  Text("0", textScaler: TextScaler.linear(12),)
+                  Text("0", textScaler: TextScaler.linear(12),
+                    style: TextStyle(color: Colors.orange,
+                    shadows: [
+                      Shadow(color: Colors.black54, offset: const Offset(4.0, 4.0), blurRadius: 8)
+                    ],
+                    ),
+                  )
                 ],
               ),
             ),
