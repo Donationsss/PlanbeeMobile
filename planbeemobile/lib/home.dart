@@ -47,7 +47,7 @@ class _HomeState extends State<Home> {
       backgroundColor: const Color(0xFFFFF9CF),
       body: Center( // Centraliza tudo na tela
         child: Column(
-          mainAxisSize: MainAxisSize.min, // Faz a coluna ocupar apenas o espaço necessário
+          mainAxisSize: MainAxisSize.min, // Faz a coluna ocupar apenas o espaço necessario
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -108,11 +108,32 @@ class _HomeState extends State<Home> {
                     ],
                   ),
                   SizedBox(width: 12,),
-                  Text("0", textScaler: TextScaler.linear(12),
-                    style: TextStyle(color: Colors.orange,
-                    shadows: [
-                      Shadow(color: Colors.black54, offset: const Offset(4.0, 4.0), blurRadius: 8)
-                    ],
+                  ShaderMask(
+                    blendMode: BlendMode.srcIn,
+                    shaderCallback: (bounds) {
+                      return const LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Color(0xFFFFE85A),
+                          Color(0xFFFF6D00),
+                        ],
+                      ).createShader(bounds);
+                    },
+                    child: Text(
+                      "0",
+                      style: const TextStyle(
+                        fontSize: 190,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white,
+                        shadows: [
+                          Shadow(
+                            color: Colors.black26,
+                            offset: Offset(3, 3),
+                            blurRadius: 4,
+                          ),
+                        ],
+                      ),
                     ),
                   )
                 ],
