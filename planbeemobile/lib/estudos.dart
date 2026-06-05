@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:planbeemobile/components/appbar.dart';
 
-
 import 'components/bottombar.dart';
+
 class Estudos extends StatefulWidget {
   const Estudos({super.key});
 
@@ -12,28 +12,6 @@ class Estudos extends StatefulWidget {
 }
 
 class _EstudosState extends State<Estudos> {
-
-  Widget _buildDiaSemana(String nome, Color cor) { //precisa do _ pra fazer o novo widget
-    return Column(
-      children: [
-        Text(nome, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15)),
-        SizedBox(height: 10),
-        Container(
-          width: 35,
-          height: 70,
-          decoration: BoxDecoration(
-            color: cor,
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(color: Colors.black54, blurRadius: 2, spreadRadius: 0),
-              BoxShadow(color: Colors.black12, blurRadius: 7, spreadRadius: 2,),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,41 +20,158 @@ class _EstudosState extends State<Estudos> {
         title: MainAppBar(),
         centerTitle: true,
       ),
-
       backgroundColor: const Color(0xFFFFF9CF),
-      body: Center( // Centraliza tudo na tela
+      body: Center(
+      child: Container(
+      width: 400,
+      height: 400,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2D2D2D),
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: const [
+          BoxShadow(
+            blurRadius: 10,
+            offset: Offset(0, 4),
+            color: Colors.black26,
+          ),
+        ],
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: const Color(0xFFFFDA5E),
+          borderRadius: BorderRadius.circular(22),
+        ),
         child: Column(
-          mainAxisSize: MainAxisSize.min, // Faz a coluna ocupar apenas o espaço necessário
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-
-                Text("Semana 1", style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold)),
-                Icon(Icons.arrow_right, size: 60),
-              ],
-            ),
-            SizedBox(height: 20), // Um respiro entre o título e o card
-
-            // cards
             Container(
-              margin: EdgeInsets.symmetric(horizontal: 10),
-              padding: EdgeInsets.symmetric(vertical: 20),
+              width: 360,
+              height: 190,
+              padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                      color: Colors.black54, blurRadius: 5,
-                      offset: Offset(4, 4)
+                color: const Color(0xFFFFEB8A),
+                borderRadius: BorderRadius.circular(18),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: Column(
+                      children: [
+                        DropdownButtonFormField(items: [], onChanged: (value) {  },),
+                        DropdownButtonFormField(items: [], onChanged: (value) {  },),
+                        TextField(
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  SizedBox(width: 20),
+
+                  // LADO DIREITO
+                  Expanded(
+                    child: Column(
+                      spacing: 10,
+                      children: [
+                        Text(
+                          "Pomodoro",
+                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                        ),
+
+                        Text(
+                          "25:00",
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.blue,
+                          ),
+                        ),
+
+                        SizedBox(
+                          width: 120,
+                          height: 20,
+                          child: TextButton(
+                            onPressed: () {},
+                            style: TextButton.styleFrom(
+                              backgroundColor: const Color(0xFFFFDA5E),
+                                padding: EdgeInsets.all(0)
+                            ),
+                            child: const Text(
+                              "Estudar",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                  fontSize: 12
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        SizedBox(
+                          width: 120,
+                          height: 25,
+                          child: TextButton(
+                            onPressed: () {},
+                            style: TextButton.styleFrom(
+                              backgroundColor: const Color(0xFFFFDA5E),
+                              padding: EdgeInsets.all(0)
+                            ),
+                            child: const Text(
+                              "Resetar",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                  fontSize: 12
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        SizedBox(
+                          width: 120,
+                          height: 20,
+                          child: TextButton(
+                            onPressed: () {},
+                            style: TextButton.styleFrom(
+                              backgroundColor: const Color(0xFFFFDA5E),
+                                padding: EdgeInsets.all(0)
+                            ),
+                            child: const Text(
+                              "Salvar",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 12
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
-                gradient: LinearGradient(
-                    colors: [Color(0xffFFA53D), Color(0xffFFCA37)]),
-                borderRadius: BorderRadius.circular(20),
+              )
+            ),
+
+            const SizedBox(height: 16),
+
+            Expanded(
+              child: Container(
+                width: 360,
+                height: 180,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFEB8A),
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: const Text("Área dos Resumos"),
               ),
             ),
           ],
         ),
       ),
+    ),
+    ),
       bottomNavigationBar: BottomBar(),
     );
   }
