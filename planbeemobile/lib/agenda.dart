@@ -66,8 +66,8 @@ class _AgendaState extends State<Agenda> {
       backgroundColor: const Color(0xFFFFF9CF),
       body: Center( // Centraliza tudo na tela
         child: Container(
-            width: 400,
-            height: 400,
+            width: 350,
+            height: 350,
             padding: EdgeInsets.all(14),
             decoration: BoxDecoration(
               color: Color(0xFF2D2D2D),

@@ -23,8 +23,8 @@ class _EstudosState extends State<Estudos> {
       backgroundColor: const Color(0xFFFFF9CF),
       body: Center(
       child: Container(
-      width: 400,
-      height: 400,
+      width: 350,
+      height: 350,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: const Color(0xFF2D2D2D),

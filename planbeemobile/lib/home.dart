@@ -54,7 +54,6 @@ class _HomeState extends State<Home> {
               children: [
 
                 Text("Semana 1", style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold)),
-                Icon(Icons.arrow_right, size: 60),
               ],
             ),
             SizedBox(height: 20),
@@ -99,7 +98,7 @@ class _HomeState extends State<Home> {
                   Stack(
                   alignment: Alignment.center,
                     children: [
-                      Image.asset("assets/favo.png", scale: 1.8,),
+                      Image.asset("assets/favo.png", scale: 2.3,),
                       Positioned(
                         top: 90,
                         left: 35,
@@ -123,7 +122,7 @@ class _HomeState extends State<Home> {
                     child: Text(
                       "0",
                       style: const TextStyle(
-                        fontSize: 190,
+                        fontSize: 140,
                         fontWeight: FontWeight.w500,
                         color: Colors.white,
                         shadows: [
