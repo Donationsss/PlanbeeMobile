@@ -4,6 +4,7 @@ import 'package:planbeemobile/components/appbar.dart';
 
 
 import 'components/bottombar.dart';
+
 class Agenda extends StatefulWidget {
   const Agenda({super.key});
 
@@ -11,26 +12,45 @@ class Agenda extends StatefulWidget {
   State<Agenda> createState() => _AgendaState();
 }
 
+class Dia {
+  final String dia;
+
+  Dia({
+    required this.dia,
+  });
+}
+
+final List<Dia> Dias = [
+  Dia(dia: "1"),
+];
+
 class _AgendaState extends State<Agenda> {
 
-  Widget _buildDiaSemana(String nome, Color cor) { //precisa do _ pra fazer o novo widget
-    return Column(
-      children: [
-        Text(nome, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15)),
-        SizedBox(height: 10),
-        Container(
-          width: 35,
-          height: 70,
-          decoration: BoxDecoration(
-            color: cor,
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(color: Colors.black54, blurRadius: 2, spreadRadius: 0),
-              BoxShadow(color: Colors.black12, blurRadius: 7, spreadRadius: 2,),
+  void _mostrarDetalhes(Dia dias) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                dias.dia,
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.green,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ],
           ),
-        ),
-      ],
+        );
+      },
     );
   }
 
@@ -45,36 +65,61 @@ class _AgendaState extends State<Agenda> {
 
       backgroundColor: const Color(0xFFFFF9CF),
       body: Center( // Centraliza tudo na tela
-        child: Column(
-          mainAxisSize: MainAxisSize.min, // Faz a coluna ocupar apenas o espaço necessário
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-
-                Text("Semana 1", style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold)),
-                Icon(Icons.arrow_right, size: 60),
-              ],
+        child: Container(
+            width: 400,
+            height: 400,
+            padding: EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: Color(0xFF2D2D2D),
+              borderRadius: BorderRadius.circular(23),
             ),
-            SizedBox(height: 20), // Um respiro entre o título e o card
 
-            // cards
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 10),
-              padding: EdgeInsets.symmetric(vertical: 20),
+            child: Container(
               decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                      color: Colors.black54, blurRadius: 5,
-                      offset: Offset(4, 4)
-                  ),
-                ],
-                gradient: LinearGradient(
-                    colors: [Color(0xffFFA53D), Color(0xffFFCA37)]),
-                borderRadius: BorderRadius.circular(20),
+                color: Color(0xFFFFDA5E),
+                borderRadius: BorderRadius.circular(23),
               ),
-            ),
-          ],
+              child: GridView.count(
+                padding: EdgeInsets.all(8),
+                crossAxisCount: 7,
+                childAspectRatio: .6,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 15,
+                children: List.generate(Dias.length, (index) {
+                  final dias = Dias[index];
+
+                  return InkWell(
+                    onTap: () {
+                      _mostrarDetalhes(dias);
+                    },
+                    child: Card(
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      clipBehavior: Clip.antiAlias, // corta qualquer overflow
+                      child: Column(
+                        children: [
+                          Expanded(
+                            child: Padding(
+                              padding: EdgeInsets.all(8),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    dias.dia,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+                }),
+              ),
+            )
         ),
       ),
       bottomNavigationBar: BottomBar(),
