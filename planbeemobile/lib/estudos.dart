@@ -4,25 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:planbeemobile/components/appbar.dart';
 
 import 'components/bottombar.dart';
+import 'estudos_store.dart';
 import 'rotina_store.dart';
-
-class ResumoEstudo {
-  final String materia;
-  final String tipo;
-  final String assunto;
-  final int segundos;
-  final Color? cor;
-  String anotacao;
-
-  ResumoEstudo({
-    required this.materia,
-    required this.tipo,
-    required this.assunto,
-    required this.segundos,
-    this.cor,
-    this.anotacao = '',
-  });
-}
 
 class Estudos extends StatefulWidget {
   const Estudos({super.key});
@@ -36,7 +19,6 @@ class _EstudosState extends State<Estudos> {
   static const _tipos = ['Resumo', 'Exercícios', 'Revisão', 'Leitura'];
 
   final _assuntoCtrl = TextEditingController();
-  final List<ResumoEstudo> _resumos = [];
 
   String? _materia;
   String? _tipo;
@@ -313,20 +295,16 @@ class _EstudosState extends State<Estudos> {
     );
     if (nota == null || !mounted) return; // fechou sem salvar
 
-    setState(() {
-      _resumos.insert(
-        0,
-        ResumoEstudo(
-          materia: materia,
-          tipo: tipo,
-          assunto: assunto,
-          segundos: segundos,
-          cor: cor,
-          anotacao: nota,
-        ),
-      );
-      _assuntoCtrl.clear();
-    });
+    await estudosStore.adicionar(
+      materia: materia,
+      tipo: tipo,
+      assunto: assunto,
+      segundos: segundos,
+      cor: cor,
+      anotacao: nota,
+    );
+    if (!mounted) return;
+    _assuntoCtrl.clear();
     _resetar();
   }
 
@@ -341,7 +319,7 @@ class _EstudosState extends State<Estudos> {
       edicao: true,
     );
     if (nota == null || !mounted) return;
-    setState(() => r.anotacao = nota);
+    await estudosStore.atualizarAnotacao(r, nota);
   }
 
   Widget _botao(String texto, VoidCallback onPressed, {bool destaque = false}) {
@@ -379,7 +357,7 @@ class _EstudosState extends State<Estudos> {
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: rotinaStore,
+      listenable: Listenable.merge([rotinaStore, estudosStore]),
       builder: (context, _) => _construir(context),
     );
   }
@@ -387,6 +365,7 @@ class _EstudosState extends State<Estudos> {
   Widget _construir(BuildContext context) {
     final dia = RotinaStore.diaDeHoje();
     final materias = rotinaStore.materiasDoDia(dia);
+    final resumos = estudosStore.itens;
     // Se a matéria escolhida foi excluída da rotina, limpa a seleção.
     if (_materia != null && !materias.any((m) => m.nome == _materia)) {
       _materia = null;
@@ -531,7 +510,7 @@ class _EstudosState extends State<Estudos> {
                     color: const Color(0xFFFFEB8A),
                     borderRadius: BorderRadius.circular(18),
                   ),
-                  child: _resumos.isEmpty
+                  child: resumos.isEmpty
                       ? const Center(
                           child: Text(
                             'Área dos Resumos\nSalve uma sessão para vê-la aqui.',
@@ -539,10 +518,10 @@ class _EstudosState extends State<Estudos> {
                           ),
                         )
                       : ListView.separated(
-                          itemCount: _resumos.length,
+                          itemCount: resumos.length,
                           separatorBuilder: (_, __) => const Divider(height: 14),
                           itemBuilder: (context, i) {
-                            final r = _resumos[i];
+                            final r = resumos[i];
                             return InkWell(
                               onTap: () => _editarAnotacao(r),
                               borderRadius: BorderRadius.circular(10),
@@ -590,11 +569,20 @@ class _EstudosState extends State<Estudos> {
                                     ],
                                   ),
                                 ),
-                                Text(_fmt(r.segundos)),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Text(_fmt(r.segundos)),
+                                    Text(
+                                      '${r.criadoEm.day.toString().padLeft(2, '0')}/${r.criadoEm.month.toString().padLeft(2, '0')}',
+                                      style: const TextStyle(
+                                          fontSize: 11, color: Colors.black54),
+                                    ),
+                                  ],
+                                ),
                                 IconButton(
                                   icon: const Icon(Icons.delete_outline),
-                                  onPressed: () =>
-                                      setState(() => _resumos.removeAt(i)),
+                                  onPressed: () => estudosStore.remover(r),
                                 ),
                               ],
                               ),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:planbeemobile/login.dart';
 import 'package:planbeemobile/perfil.dart';
 
 class MainAppBar extends StatefulWidget {
@@ -28,7 +27,7 @@ class _MainAppBarState extends State<MainAppBar> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const Login()),
+              MaterialPageRoute(builder: (context) => const Perfil()),
             );
           },
           icon: const Icon(
