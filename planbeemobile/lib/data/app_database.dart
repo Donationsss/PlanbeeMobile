@@ -9,6 +9,8 @@ import 'package:sqflite/sqflite.dart';
 ///  - materias_rotina     matérias lançadas em cada dia da semana
 ///  - sessoes_estudo      estudos salvos (com anotação)
 ///  - anotacoes_calendario anotações por data
+///  - ofensiva            sequência de dias seguidos de cada usuário
+///  - ofensiva_dias       dias em que o usuário entrou no app
 ///
 /// Todas as tabelas de dados têm usuario_id, então cada conta enxerga
 /// só o que é seu. Ao apagar um usuário, os dados dele são apagados junto.
@@ -17,7 +19,7 @@ class AppDatabase {
   static final AppDatabase instance = AppDatabase._();
 
   static const _nomeArquivo = 'planbee.db';
-  static const _versao = 1;
+  static const _versao = 2;
 
   Future<Database>? _abrindo;
 
@@ -106,12 +108,34 @@ class AppDatabase {
     batch.execute(
         'CREATE INDEX idx_anotacoes_usuario_data ON anotacoes_calendario (usuario_id, data)');
 
+    _tabelasOfensiva(batch);
+
     await batch.commit(noResult: true);
   }
 
+  void _tabelasOfensiva(Batch batch) {
+    batch.execute('''
+      CREATE TABLE IF NOT EXISTS ofensiva (
+        usuario_id  INTEGER PRIMARY KEY REFERENCES usuarios(id) ON DELETE CASCADE,
+        sequencia   INTEGER NOT NULL,
+        ultimo_dia  TEXT NOT NULL
+      )
+    ''');
+    batch.execute('''
+      CREATE TABLE IF NOT EXISTS ofensiva_dias (
+        usuario_id  INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+        dia         TEXT NOT NULL,
+        PRIMARY KEY (usuario_id, dia)
+      )
+    ''');
+  }
+
   Future<void> _atualizar(Database db, int antiga, int nova) async {
-    // Migrações futuras entram aqui, por exemplo:
-    // if (antiga < 2) { await db.execute('ALTER TABLE ...'); }
+    if (antiga < 2) {
+      final batch = db.batch();
+      _tabelasOfensiva(batch);
+      await batch.commit(noResult: true);
+    }
   }
 
   // ---- config (chave/valor) ----

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 
 import 'data/auth_service.dart';
-import 'home.dart';
+import 'login.dart';
 
 class Register extends StatefulWidget {
   const Register({super.key});
@@ -41,12 +41,16 @@ class _RegisterState extends State<Register> {
         nome: _nomeCtrl.text,
         email: _emailCtrl.text,
         senha: _senhaCtrl.text,
+        iniciarSessao: false, // quem se registra precisa fazer login
       );
       if (!mounted) return;
-      // Conta criada: já entra direto no app.
+      // Conta criada: vai para o login (e não direto para o app).
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Conta criada! Faça login para continuar.'),
+      ));
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (_) => const Home()),
+        MaterialPageRoute(builder: (_) => const Login()),
         (_) => false,
       );
     } on AuthException catch (e) {

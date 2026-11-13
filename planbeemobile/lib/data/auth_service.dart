@@ -60,6 +60,7 @@ class AuthService {
     required String nome,
     required String email,
     required String senha,
+    bool iniciarSessao = true,
   }) async {
     final n = nome.trim();
     final e = email.trim().toLowerCase();
@@ -91,6 +92,7 @@ class AuthService {
     });
 
     final u = Usuario(id: id, nome: n, email: e);
+    if (!iniciarSessao) return u; // só cria a conta, sem logar
     try {
       await _iniciarSessao(u);
     } catch (_) {
