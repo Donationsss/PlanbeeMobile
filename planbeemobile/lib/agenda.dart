@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:planbeemobile/components/appbar.dart';
 
 import 'components/bottombar.dart';
+import 'anotacoes_store.dart';
 import 'rotina_store.dart';
 
 class Agenda extends StatefulWidget {
@@ -20,18 +21,12 @@ class _AgendaState extends State<Agenda> {
 
   late DateTime _mesAtual;
 
-  // Anotações por data (chave: yyyy-mm-dd)
-  final Map<String, List<String>> _anotacoes = {};
-
   @override
   void initState() {
     super.initState();
     final hoje = DateTime.now();
     _mesAtual = DateTime(hoje.year, hoje.month);
   }
-
-  String _chave(DateTime d) =>
-      '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
 
   void _mudarMes(int delta) {
     setState(() => _mesAtual = DateTime(_mesAtual.year, _mesAtual.month + delta));
@@ -56,22 +51,21 @@ class _AgendaState extends State<Agenda> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (ctx) {
-        return StatefulBuilder(builder: (ctx, setSheet) {
+        return ListenableBuilder(listenable: anotacoesStore, builder: (ctx, _) {
           final media = MediaQuery.of(ctx);
           final teclado = media.viewInsets.bottom;
           final alturaMax = media.size.height - teclado - media.padding.top - 16;
           final altura = (media.size.height * 0.82).clamp(0.0, alturaMax).toDouble();
 
-          final lista = _anotacoes.putIfAbsent(_chave(data), () => []);
+          final lista = anotacoesStore.doDia(data);
           final diaSemana = data.weekday % 7;
           final materias = rotinaStore.materiasDoDia(diaSemana);
 
           void adicionar() {
             final t = ctrl.text.trim();
             if (t.isEmpty) return;
-            setState(() => lista.add(t));
             ctrl.clear();
-            setSheet(() {});
+            anotacoesStore.adicionar(data, t);
           }
 
           return Padding(
@@ -241,15 +235,13 @@ class _AgendaState extends State<Agenda> {
                                   ),
                                   const SizedBox(width: 12),
                                   Expanded(
-                                    child: Text(lista[i],
+                                    child: Text(lista[i].texto,
                                         style: const TextStyle(fontSize: 15)),
                                   ),
                                   IconButton(
                                     icon: const Icon(Icons.delete_outline),
-                                    onPressed: () {
-                                      setState(() => lista.removeAt(i));
-                                      setSheet(() {});
-                                    },
+                                    onPressed: () =>
+                                        anotacoesStore.remover(data, lista[i]),
                                   ),
                                 ],
                               ),
@@ -318,7 +310,7 @@ class _AgendaState extends State<Agenda> {
   }
 
   Widget _celulaDia(DateTime data, bool hoje) {
-    final temAnotacao = (_anotacoes[_chave(data)] ?? []).isNotEmpty;
+    final temAnotacao = anotacoesStore.temAnotacao(data);
     return InkWell(
       onTap: () => _mostrarDetalhes(data),
       borderRadius: BorderRadius.circular(10),
@@ -352,6 +344,13 @@ class _AgendaState extends State<Agenda> {
 
   @override
   Widget build(BuildContext context) {
+    return ListenableBuilder(
+      listenable: anotacoesStore,
+      builder: (context, _) => _construir(context),
+    );
+  }
+
+  Widget _construir(BuildContext context) {
     final primeiro = DateTime(_mesAtual.year, _mesAtual.month, 1);
     final diasNoMes = DateTime(_mesAtual.year, _mesAtual.month + 1, 0).day;
     final deslocamento = primeiro.weekday % 7; // domingo = 0

@@ -55,13 +55,14 @@ class _RotinaState extends State<Rotina> {
       ..showSnackBar(SnackBar(content: Text(texto)));
   }
 
-  void _adicionar(int dia) {
+  Future<void> _adicionar(int dia) async {
     final nome = _ctrls[dia].text.trim();
     if (nome.isEmpty) {
       _aviso('Digite o nome da matéria.');
       return;
     }
-    final ok = rotinaStore.adicionar(dia, nome, _cores[dia].toColor());
+    final ok = await rotinaStore.adicionar(dia, nome, _cores[dia].toColor());
+    if (!mounted) return;
     if (!ok) {
       _aviso('"$nome" já está na rotina de ${RotinaStore.nomesDias[dia]}.');
       return;
@@ -69,8 +70,9 @@ class _RotinaState extends State<Rotina> {
     _ctrls[dia].clear();
   }
 
-  void _remover(int dia, Materia m) {
-    final indice = rotinaStore.remover(dia, m);
+  Future<void> _remover(int dia, Materia m) async {
+    final indice = await rotinaStore.remover(dia, m);
+    if (indice < 0 || !mounted) return;
     ScaffoldMessenger.of(context)
       ..clearSnackBars()
       ..showSnackBar(
