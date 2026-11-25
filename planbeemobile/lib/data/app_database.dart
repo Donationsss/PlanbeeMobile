@@ -19,7 +19,7 @@ class AppDatabase {
   static final AppDatabase instance = AppDatabase._();
 
   static const _nomeArquivo = 'planbee.db';
-  static const _versao = 2;
+  static const _versao = 3;
 
   Future<Database>? _abrindo;
 
@@ -54,7 +54,8 @@ class AppDatabase {
         email       TEXT NOT NULL UNIQUE,
         senha_hash  TEXT NOT NULL,
         salt        TEXT NOT NULL,
-        criado_em   TEXT NOT NULL
+        criado_em   TEXT NOT NULL,
+        foto        TEXT
       )
     ''');
 
@@ -135,6 +136,10 @@ class AppDatabase {
       final batch = db.batch();
       _tabelasOfensiva(batch);
       await batch.commit(noResult: true);
+    }
+    if (antiga < 3) {
+      // Foto de perfil escolhida pelo usuário (guardada em base64).
+      await db.execute('ALTER TABLE usuarios ADD COLUMN foto TEXT');
     }
   }
 

@@ -90,11 +90,6 @@ class _BottomBarState extends State<BottomBar> {
           icon: Icon(Icons.menu_book, color: Colors.black),
           label: "",
         ),
-
-        BottomNavigationBarItem(
-          icon: Icon(MdiIcons.cog, color: Colors.black),
-          label: "",
-        ),
       ],
     );
   }

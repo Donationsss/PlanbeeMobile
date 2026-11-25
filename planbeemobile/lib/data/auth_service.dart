@@ -14,7 +14,27 @@ class Usuario {
   final String nome;
   final String email;
 
-  const Usuario({required this.id, required this.nome, required this.email});
+  /// Foto de perfil em base64 (já redimensionada ao escolher).
+  /// Null (ou vazia) = usa o ícone padrão de usuário.
+  final String? foto;
+
+  const Usuario({
+    required this.id,
+    required this.nome,
+    required this.email,
+    this.foto,
+  });
+
+  /// Bytes da foto prontos para o Image.memory, ou null se não houver.
+  Uint8List? get fotoBytes {
+    final dados = foto;
+    if (dados == null || dados.isEmpty) return null;
+    try {
+      return base64Decode(dados);
+    } catch (_) {
+      return null;
+    }
+  }
 }
 
 /// Erro com mensagem pronta para mostrar ao usuário.
@@ -41,7 +61,15 @@ class AuthService {
 
   static const _chaveSessao = 'usuario_logado';
 
-  static Usuario? usuario;
+  /// Usuário logado. É um ValueNotifier para que o avatar do appbar (e a
+  /// tela de perfil) se atualizem sozinhos quando a foto muda.
+  static final ValueNotifier<Usuario?> _usuario = ValueNotifier<Usuario?>(null);
+
+  static Usuario? get usuario => _usuario.value;
+
+  static set usuario(Usuario? u) => _usuario.value = u;
+
+  static ValueListenable<Usuario?> get usuarioListenable => _usuario;
 
   static bool get logado => usuario != null;
 
@@ -129,9 +157,50 @@ class AuthService {
       id: linha['id'] as int,
       nome: linha['nome'] as String,
       email: linha['email'] as String,
+      foto: linha['foto'] as String?,
     );
     await _iniciarSessao(u);
     return u;
+  }
+
+  /// Fluxo local de recuperação: verifica se o e-mail existe na conta do
+  /// aparelho. O "código de verificação" é gerado pelo próprio app e mostrado
+  /// na tela — não há envio de e-mail.
+  static Future<Usuario> recuperarAcesso(String email) async {
+    final e = email.trim().toLowerCase();
+    if (e.isEmpty) throw const AuthException('Digite seu email.');
+    if (!emailValido(e)) throw const AuthException('Digite um email válido.');
+    final db = await AppDatabase.instance.db;
+    final r = await db.query('usuarios',
+        where: 'email = ?', whereArgs: [e], limit: 1);
+    if (r.isEmpty) throw const AuthException('Email não cadastrado.');
+    final linha = r.first;
+    return Usuario(
+      id: linha['id'] as int,
+      nome: linha['nome'] as String,
+      email: linha['email'] as String,
+      foto: linha['foto'] as String?,
+    );
+  }
+
+  /// Troca a senha do usuário (fluxo de recuperação local).
+  static Future<void> trocarSenha({
+    required String email,
+    required String novaSenha,
+  }) async {
+    final e = email.trim().toLowerCase();
+    if (novaSenha.length < 6) {
+      throw const AuthException('A senha precisa ter pelo menos 6 caracteres.');
+    }
+    final db = await AppDatabase.instance.db;
+    final r = await db.query('usuarios',
+        where: 'email = ?', whereArgs: [e], limit: 1);
+    if (r.isEmpty) throw const AuthException('Email não cadastrado.');
+    final sal = _novoSal();
+    await db.update('usuarios', {
+      'senha_hash': _hash(novaSenha, sal),
+      'salt': sal,
+    }, where: 'id = ?', whereArgs: [r.first['id'] as int]);
   }
 
   /// Chamado ao abrir o app: reentra sozinho se já havia alguém logado.
@@ -152,6 +221,7 @@ class AuthService {
         id: id,
         nome: r.first['nome'] as String,
         email: r.first['email'] as String,
+        foto: r.first['foto'] as String?,
       );
       await _carregarDados(id);
       return true;
@@ -168,6 +238,28 @@ class AuthService {
     rotinaStore.limpar();
     estudosStore.limpar();
     anotacoesStore.limpar();
+  }
+
+  /// Troca (ou remove, passando null) a foto de perfil do usuário logado.
+  /// [fotoBase64] deve vir já redimensionada para não inchar o banco.
+  static Future<void> atualizarFoto(String? fotoBase64) async {
+    final atual = usuario;
+    if (atual == null) throw const AuthException('Nenhum usuário logado.');
+
+    final db = await AppDatabase.instance.db;
+    await db.update(
+      'usuarios',
+      {'foto': fotoBase64},
+      where: 'id = ?',
+      whereArgs: [atual.id],
+    );
+
+    usuario = Usuario(
+      id: atual.id,
+      nome: atual.nome,
+      email: atual.email,
+      foto: fotoBase64,
+    );
   }
 
   static Future<void> _iniciarSessao(Usuario u) async {

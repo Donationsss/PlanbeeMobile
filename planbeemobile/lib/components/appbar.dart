@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:planbeemobile/components/avatar_usuario.dart';
 import 'package:planbeemobile/perfil.dart';
 
-class MainAppBar extends StatefulWidget {
+class MainAppBar extends StatelessWidget {
   const MainAppBar({super.key});
 
-  @override
-  State<MainAppBar> createState() => _MainAppBarState();
-}
-
-class _MainAppBarState extends State<MainAppBar> {
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -19,7 +15,7 @@ class _MainAppBarState extends State<MainAppBar> {
           height: 50,
           width: 50,
         ),
-        Text(
+        const Text(
           "Planbee",
           style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
         ),
@@ -30,11 +26,8 @@ class _MainAppBarState extends State<MainAppBar> {
               MaterialPageRoute(builder: (context) => const Perfil()),
             );
           },
-          icon: const Icon(
-            Icons.person,
-            size: 35,
-            color: Colors.black,
-          ),
+          tooltip: 'Perfil',
+          icon: const AvatarUsuario(tamanho: 35, tamanhoIcone: 35),
         ),
       ],
     );

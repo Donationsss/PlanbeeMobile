@@ -17,6 +17,10 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   static const _verde = Color(0xFF43C04B);
 
+  /// Fatores da órbita da abelha em relação ao favo (escala do colmeia).
+  static const double _rx = 1.15;
+  static const double _ry = 1.0;
+
   // Controla a volta da abelha em torno do favo (uma volta a cada 6 s).
   late final AnimationController _voo = AnimationController(
     vsync: this,
@@ -79,22 +83,34 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   }
 
   /// A abelha desenhada na posição [a] (radianos) da órbita.
-  /// A posição é relativa ao tamanho do favo (Alignment), então funciona
-  /// em qualquer tamanho de tela.
+  /// A posição é relativa ao tamanho do favo, então funciona em qualquer
+  /// tamanho de tela. A imagem fica posicionada de forma absoluta sobre o
+  /// favo (o Stack é limitado pelo favo) e segue a rotação do voo.
   Widget _abelha(double a) {
-    return Positioned.fill(
-      child: Align(
-        alignment: Alignment(math.cos(a) * 1.15, math.sin(a) * 1.0),
-        child: Transform.rotate(
-          angle: math.sin(a * 2) * 0.25, // balanço leve enquanto voa
-          child: Image.asset("assets/abelha_animada.png", scale: 9),
-        ),
+    // Direção do voo: tangente da elipse percorrida pela abelha.
+    final dx = -math.sin(a) * _rx;
+    final dy = math.cos(a) * _ry;
+    // A imagem aponta para cima, então soma 90° para o ângulo acompanhar
+    // a rotação (a abelha fica sempre "de frente" para onde está indo).
+    final angulo = math.atan2(dy, dx) + math.pi / 2;
+
+    // Posição absoluta em relação ao favo: o Stack é limitado pelo favo,
+    // então os eixos ficam centrados no centro da colmeia.
+    final x = math.cos(a) * _rx;
+    final y = math.sin(a) * _ry;
+
+    return Align(
+      alignment: Alignment(x, y),
+      child: Transform.rotate(
+        angle: angulo,
+        child: Image.asset("assets/abelha_animada.png", scale: 9),
       ),
     );
   }
 
-  /// Favo no centro e abelha girando: na metade de cima da órbita ela passa
-  /// por trás do favo, na de baixo passa pela frente.
+  /// Favo no centro e abelha voando: na metade de cima da órbita ela passa
+  /// por trás do favo, na de baixo passa pela frente. A abelha é colocada em
+  /// camadas absolutas (Positioned) sobre o favo.
   Widget _favoComAbelha() {
     return AnimatedBuilder(
       animation: _voo,
@@ -106,9 +122,17 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           alignment: Alignment.center,
           clipBehavior: Clip.none,
           children: [
-            if (atras) _abelha(a) else const SizedBox.shrink(),
+            // Abelha na camada de baixo: passa por trás do favo.
+            if (atras)
+              Positioned.fill(child: _abelha(a))
+            else
+              const SizedBox.shrink(),
             favo!,
-            if (!atras) _abelha(a) else const SizedBox.shrink(),
+            // Abelha na camada de cima: passa pela frente do favo.
+            if (!atras)
+              Positioned.fill(child: _abelha(a))
+            else
+              const SizedBox.shrink(),
           ],
         );
       },
