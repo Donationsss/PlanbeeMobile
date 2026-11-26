@@ -186,9 +186,9 @@ class _ForgotpasswordState extends State<Forgotpassword> {
                           if (_codigo != null)
                             Text('Código de verificação: $_codigo',
                                 style: const TextStyle(
-                                    fontSize: 20,
+                                    fontSize: 12,
                                     fontWeight: FontWeight.bold,
-                                    letterSpacing: 8)),
+                                    letterSpacing: 4)),
                         ],
                         if (_erro != null)
                           Padding(
@@ -231,7 +231,7 @@ class _ForgotpasswordState extends State<Forgotpassword> {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFFFFCB20),
                               elevation: 10,
-                              fixedSize: const Size(150, 50),
+                              fixedSize: const Size(180, 50),
                             ),
                             child: _carregando
                                 ? const SizedBox(
@@ -243,7 +243,8 @@ class _ForgotpasswordState extends State<Forgotpassword> {
                                 : const Text("Verificar código",
                                     style: TextStyle(
                                         color: Colors.black,
-                                        fontWeight: FontWeight.bold)),
+                                        fontWeight: FontWeight.bold,
+                                    )),
                           ),
                       ],
                     ),

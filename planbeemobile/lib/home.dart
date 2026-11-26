@@ -117,22 +117,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       child: Image.asset("assets/favo.png", scale: 2.3),
       builder: (context, favo) {
         final a = _voo.value * 2 * math.pi;
-        final atras = math.sin(a) < 0;
         return Stack(
           alignment: Alignment.center,
           clipBehavior: Clip.none,
           children: [
-            // Abelha na camada de baixo: passa por trás do favo.
-            if (atras)
-              Positioned.fill(child: _abelha(a))
-            else
-              const SizedBox.shrink(),
             favo!,
-            // Abelha na camada de cima: passa pela frente do favo.
-            if (!atras)
-              Positioned.fill(child: _abelha(a))
-            else
-              const SizedBox.shrink(),
+            // A abelha fica sempre na camada de cima, por cima do favo.
+            Positioned.fill(child: _abelha(a)),
           ],
         );
       },
