@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:planbeemobile/components/avatar_usuario.dart';
 import 'package:planbeemobile/perfil.dart';
 
-class MainAppBar extends StatelessWidget {
-  const MainAppBar({super.key});
+class MainAppBar extends StatefulWidget {
+  /// Quando true, o botão de perfil fica desativado (ex.: durante um estudo).
+  final bool bloqueado;
 
+  const MainAppBar({super.key, this.bloqueado = false});
+
+  @override
+  State<MainAppBar> createState() => _MainAppBarState();
+}
+
+class _MainAppBarState extends State<MainAppBar> {
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -15,19 +22,24 @@ class MainAppBar extends StatelessWidget {
           height: 50,
           width: 50,
         ),
-        const Text(
+        Text(
           "Planbee",
           style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
         ),
         IconButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const Perfil()),
-            );
-          },
-          tooltip: 'Perfil',
-          icon: const AvatarUsuario(tamanho: 35, tamanhoIcone: 35),
+          onPressed: widget.bloqueado
+              ? null
+              : () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Perfil()),
+                  );
+                },
+          icon: Icon(
+            Icons.person,
+            size: 35,
+            color: widget.bloqueado ? Colors.black26 : Colors.black,
+          ),
         ),
       ],
     );

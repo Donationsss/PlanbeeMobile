@@ -7,7 +7,10 @@ import '../agenda.dart';
 import '../home.dart';
 
 class BottomBar extends StatefulWidget {
-  const BottomBar({super.key});
+  /// Quando true, a navegação fica travada (ex.: durante um estudo).
+  final bool bloqueado;
+
+  const BottomBar({super.key, this.bloqueado = false});
 
   @override
   State<BottomBar> createState() => _BottomBarState();
@@ -18,7 +21,7 @@ class _BottomBarState extends State<BottomBar> {
 
   @override
   Widget build(BuildContext context) {
-    return BottomNavigationBar(
+    final barra = BottomNavigationBar(
       backgroundColor: Color(0xFFFFDA5E),
       showSelectedLabels: false,
       showUnselectedLabels: false,
@@ -27,6 +30,14 @@ class _BottomBarState extends State<BottomBar> {
       type: BottomNavigationBarType.fixed,
 
       onTap: (index) {
+        if (widget.bloqueado) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(const SnackBar(
+              content: Text('Finalize o estudo para sair desta tela.'),
+            ));
+          return;
+        }
 
         setState(() {
           paginaAtual = index;
@@ -90,7 +101,14 @@ class _BottomBarState extends State<BottomBar> {
           icon: Icon(Icons.menu_book, color: Colors.black),
           label: "",
         ),
+
+        BottomNavigationBarItem(
+          icon: Icon(MdiIcons.cog, color: Colors.black),
+          label: "",
+        ),
       ],
     );
+
+    return widget.bloqueado ? Opacity(opacity: 0.4, child: barra) : barra;
   }
 }

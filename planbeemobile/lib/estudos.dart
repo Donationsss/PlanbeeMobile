@@ -25,6 +25,10 @@ class _EstudosState extends State<Estudos> {
   int _restante = _duracao;
   Timer? _timer;
 
+  /// true desde o primeiro "Estudar" até o estudo ser salvo ou descartado.
+  /// Enquanto estiver true a tela fica travada (sem voltar, sem navegar).
+  bool _emSessao = false;
+
   bool get _rodando => _timer?.isActive ?? false;
 
   @override
@@ -37,11 +41,35 @@ class _EstudosState extends State<Estudos> {
   String _fmt(int s) =>
       '${(s ~/ 60).toString().padLeft(2, '0')}:${(s % 60).toString().padLeft(2, '0')}';
 
+  /// O que ainda falta preencher antes de poder estudar.
+  List<String> _pendencias() => [
+        if (_materia == null) 'matéria',
+        if (_tipo == null) 'tipo de estudo',
+        if (_assuntoCtrl.text.trim().isEmpty) 'assunto',
+      ];
+
+  void _aviso(String msg) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(msg)));
+  }
+
   void _alternar() {
     if (_rodando) {
       _timer?.cancel();
       setState(() {});
       return;
+    }
+
+    // Só começa depois de escolher matéria, tipo e declarar o assunto.
+    if (!_emSessao) {
+      final faltando = _pendencias();
+      if (faltando.isNotEmpty) {
+        _aviso('Para estudar, preencha: ${faltando.join(', ')}.');
+        return;
+      }
+      FocusScope.of(context).unfocus();
+      _emSessao = true; // trava a tela
     }
     if (_restante == 0) _restante = _duracao;
     _timer = Timer.periodic(const Duration(seconds: 1), (t) {
@@ -58,9 +86,46 @@ class _EstudosState extends State<Estudos> {
     setState(() {});
   }
 
+  /// Encerra a sessão e libera a tela (usado depois de salvar e ao descartar).
   void _resetar() {
     _timer?.cancel();
-    setState(() => _restante = _duracao);
+    setState(() {
+      _restante = _duracao;
+      _emSessao = false;
+    });
+  }
+
+  /// Botão "Resetar": durante um estudo, pede confirmação antes de descartar.
+  Future<void> _confirmarReset() async {
+    if (!_emSessao) {
+      _resetar();
+      return;
+    }
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFFFFEB8A),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const Text('Descartar este estudo?'),
+        content: const Text(
+            'O tempo estudado não será salvo e a tela será liberada.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Continuar estudando',
+                style: TextStyle(color: Colors.black)),
+          ),
+          TextButton(
+            style:
+                TextButton.styleFrom(backgroundColor: const Color(0xFFFFA53D)),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Descartar', style: TextStyle(color: Colors.black)),
+          ),
+        ],
+      ),
+    );
+    if (ok != true || !mounted) return;
+    _resetar();
   }
 
   /// Modal de anotações do estudo. Serve para criar (edicao = false)
@@ -267,6 +332,10 @@ class _EstudosState extends State<Estudos> {
   }
 
   Future<void> _salvar() async {
+    if (!_emSessao) {
+      _aviso('Toque em Estudar para começar antes de salvar.');
+      return;
+    }
     final assunto = _assuntoCtrl.text.trim();
     if (_materia == null || _tipo == null || assunto.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -322,8 +391,11 @@ class _EstudosState extends State<Estudos> {
     await estudosStore.atualizarAnotacao(r, nota);
   }
 
-  Widget _botao(String texto, VoidCallback onPressed, {bool destaque = false}) {
-    return SizedBox(
+  Widget _botao(String texto, VoidCallback onPressed,
+      {bool destaque = false, bool ativo = true}) {
+    return Opacity(
+      opacity: ativo ? 1 : 0.5,
+      child: SizedBox(
       width: double.infinity,
       height: 30,
       child: TextButton(
@@ -338,6 +410,7 @@ class _EstudosState extends State<Estudos> {
           style: const TextStyle(
               color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13),
         ),
+      ),
       ),
     );
   }
@@ -371,10 +444,22 @@ class _EstudosState extends State<Estudos> {
       _materia = null;
     }
 
-    return Scaffold(
+    return PopScope(
+      // Durante o estudo, o botão/gesto de voltar do aparelho é bloqueado.
+      canPop: !_emSessao,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop && _emSessao) {
+          _aviso('Finalize o estudo (Salvar) ou descarte (Resetar) para sair.');
+        }
+      },
+      child: Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFFFDA5E),
-        title: const MainAppBar(),
+        // Esconde a seta de voltar enquanto a tela está travada.
+        leading: _emSessao
+            ? const Icon(Icons.lock_outline, color: Colors.black54)
+            : null,
+        title: MainAppBar(bloqueado: _emSessao),
         centerTitle: true,
       ),
       backgroundColor: const Color(0xFFFFF9CF),
@@ -447,7 +532,7 @@ class _EstudosState extends State<Estudos> {
                                       ),
                                     ))
                                 .toList(),
-                            onChanged: materias.isEmpty
+                            onChanged: (materias.isEmpty || _emSessao)
                                 ? null
                                 : (v) => setState(() => _materia = v),
                           ),
@@ -459,11 +544,15 @@ class _EstudosState extends State<Estudos> {
                             items: _tipos
                                 .map((t) => DropdownMenuItem(value: t, child: Text(t)))
                                 .toList(),
-                            onChanged: (v) => setState(() => _tipo = v),
+                            onChanged: _emSessao
+                                ? null
+                                : (v) => setState(() => _tipo = v),
                           ),
                           const SizedBox(height: 10),
                           TextField(
                             controller: _assuntoCtrl,
+                            enabled: !_emSessao,
+                            onChanged: (_) => setState(() {}),
                             decoration: _deco('Assunto'),
                           ),
                         ],
@@ -488,17 +577,42 @@ class _EstudosState extends State<Estudos> {
                           ),
                           const SizedBox(height: 8),
                           _botao(_rodando ? 'Pausar' : 'Estudar', _alternar,
-                              destaque: true),
+                              destaque: true,
+                              ativo: _emSessao || _pendencias().isEmpty),
                           const SizedBox(height: 8),
-                          _botao('Resetar', _resetar),
+                          _botao('Resetar', _confirmarReset),
                           const SizedBox(height: 8),
-                          _botao('Salvar', _salvar),
+                          _botao('Salvar', _salvar, ativo: _emSessao),
                         ],
                       ),
                     ),
                   ],
                 ),
               ),
+              if (_emSessao) ...[
+                const SizedBox(height: 10),
+                Container(
+                  width: double.infinity,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF2D2D2D),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Row(
+                    children: [
+                      Icon(Icons.lock_outline, size: 16, color: Colors.white),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Estudo em andamento. Toque em Salvar para finalizar e liberar a tela.',
+                          style: TextStyle(color: Colors.white, fontSize: 12),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
               const SizedBox(height: 16),
 
               // Área dos resumos
@@ -595,7 +709,8 @@ class _EstudosState extends State<Estudos> {
           ),
         ),
       ),
-      bottomNavigationBar: BottomBar(),
+      bottomNavigationBar: BottomBar(bloqueado: _emSessao),
+    ),
     );
   }
 }
