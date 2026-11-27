@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:planbeemobile/components/avatar_usuario.dart';
 import 'package:planbeemobile/perfil.dart';
 
 class MainAppBar extends StatefulWidget {
@@ -26,19 +27,26 @@ class _MainAppBarState extends State<MainAppBar> {
           "Planbee",
           style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
         ),
-        IconButton(
-          onPressed: widget.bloqueado
-              ? null
-              : () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const Perfil()),
-                  );
-                },
-          icon: Icon(
-            Icons.person,
-            size: 35,
-            color: widget.bloqueado ? Colors.black26 : Colors.black,
+        Material(
+          color: Colors.transparent,
+          shape: const CircleBorder(),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: widget.bloqueado
+                ? null
+                : () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const Perfil()),
+                    );
+                  },
+            child: Padding(
+              padding: const EdgeInsets.all(6),
+              child: Opacity(
+                opacity: widget.bloqueado ? 0.35 : 1,
+                child: const AvatarUsuario(tamanho: 35, tamanhoIcone: 35),
+              ),
+            ),
           ),
         ),
       ],
