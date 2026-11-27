@@ -102,10 +102,7 @@ class _BottomBarState extends State<BottomBar> {
           label: "",
         ),
 
-        BottomNavigationBarItem(
-          icon: Icon(MdiIcons.cog, color: Colors.black),
-          label: "",
-        ),
+
       ],
     );
 
